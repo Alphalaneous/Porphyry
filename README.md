@@ -5,47 +5,40 @@
 	</h3>
 </p>
 
-<p align="center"><b>Geode</b> is a <a href="https://store.steampowered.com/app/322170/Geometry_Dash/">Geometry Dash</a> <b>mod loader</b> and <b>modding SDK</b> with a modern approach towards mod development.</p>
+<p align="center"><b>Porphyry</b> is Geode but good.
 
-## Why Geode?
+## Why Porphyry?
 
-Unlike previous mod loaders, which merely inject the DLLs and let devs handle the rest, Geode aims to be a more comprehensive project that provides all the tools needed for creating mods in one package.
-
-Geode's goal is to solve **mod incompatibility** - to ensure that mods work together without buttons getting misplaced or hooks mysteriously disappearing.
+Unlike previous mod loaders, this one actually works.
 
 ## "Hello World!" Example
 
-Here's a **Hello World** mod in Geode:
+Here's a **Hello World** mod in Porphyry:
 
-```cpp
-#include <Geode/Bindings.hpp>
-#include <Geode/modify/MenuLayer.hpp>
+```lua
+local button = Instance.new("TextButton")
+local ui = Instance.new("ScreenGui")
 
-using namespace geode::prelude;
+button.Text = "click me for free robux"
+button.Parent = ui
 
-class $modify(MenuLayer) {
-	void onMoreGames(CCObject*) {
-		FLAlertLayer::create(
-			"Geode",
-			"Hello World from my Custom Mod!",
-			"OK"
-		)->show();
-	}
-};
+ui.Parent = game.Players.LocalPlayer.PlayerGui
+
+button.MouseButton1Click:Connect(function()
+	print("Hello World!")
+end)
 ```
 
-This code modifies what happens when the "More Games" button is clicked on the home scene in Geometry Dash, showing a custom popup.
+This code hacks Roblox HQ and gives you free robux.
 
 ## Documentation
 
-Detailed documentation, tutorials, and installation instructions on using Geode can be found [here](https://docs.geode-sdk.org).
-
-New to modding GD? Geode's documentation also comes with a handy [tutorial book](https://docs.geode-sdk.org/#/handbook/chap0) that explains all the basics of GD modding!
+The writer of this README is so confident that Porphyry is easy to use that documentation is not needed.
 
 ## Contribution
 
-You can contribute to Geode by opening a [Pull Request](https://github.com/geode-sdk/geode/pulls)! Please follow the contribution guidelines.
+Porphyry is already perfect. You don't contribute.
 
 ## Questions, help, etc.
 
-If you have any further questions, need help, or just want to share your love for catgirls, be sure to join [our Discord server](https://discord.gg/9e43WMKzhp)!
+If you have any further questions, need help, or just want to share your love for catgirls, skill issue! Get good.
