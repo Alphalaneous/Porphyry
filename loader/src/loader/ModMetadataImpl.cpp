@@ -307,8 +307,11 @@ Result<ModMetadata> ModMetadata::Impl::create(ModJson const& json) {
     if (json.contains("geode") && json["geode"].is_string()) {
         GEODE_UNWRAP_INTO(
             schema,
-            VersionInfo::parse(json["geode"].as_string())
-                .expect("[mod.json] has invalid target loader version: {error}")
+            VersionInfo::parse(json["geode"].as_string()).mapErr(
+                [](auto const& err) {
+                    return fmt::format("[mod.json] has invalid target loader version: {}", err);
+                }
+            )
         );
     }
     else {
@@ -382,7 +385,9 @@ Result<ModMetadata> ModMetadata::Impl::createFromGeodeZip(file::Unzip& unzip) {
 
     // Read mod.json & parse if possible
     GEODE_UNWRAP_INTO(
-        auto jsonData, unzip.extract("mod.json").expect("Unable to read mod.json: {error}")
+        auto jsonData, unzip.extract("mod.json").mapErr([](auto const& err) {
+            return fmt::format("Unable to extract mod.json: {}", err);
+        })
     );
 
     std::string error;
@@ -400,7 +405,9 @@ Result<ModMetadata> ModMetadata::Impl::createFromGeodeZip(file::Unzip& unzip) {
     auto impl = info.m_impl.get();
     impl->m_path = unzip.getPath();
 
-    GEODE_UNWRAP(info.addSpecialFiles(unzip).expect("Unable to add extra files: {error}"));
+    GEODE_UNWRAP(info.addSpecialFiles(unzip).mapErr([](auto const& err) {
+        return fmt::format("Unable to add extra files: {}", err);
+    }));
 
     return Ok(info);
 }
@@ -409,7 +416,11 @@ Result<> ModMetadata::Impl::addSpecialFiles(file::Unzip& unzip) {
     // unzip known MD files
     for (auto& [file, target] : this->getSpecialFiles()) {
         if (unzip.hasEntry(file)) {
-            GEODE_UNWRAP_INTO(auto data, unzip.extract(file).expect("Unable to extract \"{}\"", file));
+            // reference to local binding 'file' declared in enclosing function 
+            std::string_view fileStr(file); 
+            GEODE_UNWRAP_INTO(auto data, unzip.extract(fileStr).mapErr([&](auto const& err) {
+                return fmt::format("Unable to extract \"{}\": {}", fileStr, err);
+            }));
             *target = sanitizeDetailsData(std::string(data.begin(), data.end()));
         }
     }
@@ -477,12 +488,6 @@ std::string ModMetadata::getName() const {
     return m_impl->m_name;
 }
 
-std::string ModMetadata::getDeveloper() const {
-    // m_developers should be guaranteed to never be empty, but this is 
-    // just in case it is anyway somehow
-    return m_impl->m_developers.empty() ? "" : m_impl->m_developers.front();
-}
-
 std::string ModMetadata::formatDeveloperDisplayString(std::vector<std::string> const& developers) {
     switch (developers.size()) {
         case 0: return "Unknown"; break;
@@ -510,9 +515,6 @@ std::optional<std::string> ModMetadata::getChangelog() const {
 std::optional<std::string> ModMetadata::getSupportInfo() const {
     return m_impl->m_supportInfo;
 }
-std::optional<std::string> ModMetadata::getRepository() const {
-    return m_impl->m_links.getSourceURL();
-}
 ModMetadataLinks ModMetadata::getLinks() const {
     return m_impl->m_links;
 }
@@ -528,19 +530,7 @@ std::vector<ModMetadata::Incompatibility> ModMetadata::getIncompatibilities() co
 std::vector<std::string> ModMetadata::getSpritesheets() const {
     return m_impl->m_spritesheets;
 }
-std::vector<std::pair<std::string, Setting>> ModMetadata::getSettings() const {
-    std::vector<std::pair<std::string, Setting>> res;
-    for (auto [key, sett] : m_impl->m_settings) {
-        auto checker = JsonChecker(sett);
-        auto value = checker.root("");
-        auto legacy = Setting::parse(key, m_impl->m_id, value);
-        if (!checker.isError() && legacy.isOk()) {
-            res.push_back(std::make_pair(key, *legacy));
-        }
-    }
-    return res;
-}
-std::vector<std::pair<std::string, matjson::Value>> ModMetadata::getSettingsV3() const {
+std::vector<std::pair<std::string, matjson::Value>> ModMetadata::getSettings() const {
     return m_impl->m_settings;
 }
 std::unordered_set<std::string> ModMetadata::getTags() const {
@@ -640,10 +630,6 @@ void ModMetadata::setIncompatibilities(std::vector<Incompatibility> const& value
 }
 void ModMetadata::setSpritesheets(std::vector<std::string> const& value) {
     m_impl->m_spritesheets = value;
-}
-void ModMetadata::setSettings(std::vector<std::pair<std::string, Setting>> const& value) {
-    // intentionally no-op because no one is supposed to be using this 
-    // without subscribing to "internals are not stable" mentality
 }
 void ModMetadata::setSettings(std::vector<std::pair<std::string, matjson::Value>> const& value) {
     m_impl->m_settings = value;
