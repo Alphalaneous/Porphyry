@@ -523,6 +523,8 @@ void ModList::activateSearch(bool activate) {
 }
 
 void ModList::updateTopContainer() {
+    auto oldHeight = m_topContainer->getContentHeight();
+
     m_topContainer->updateLayout();
 
     // Store old relative scroll position
@@ -542,7 +544,7 @@ void ModList::updateTopContainer() {
     if (oldPosition < -oldPositionArea) oldPosition = -oldPositionArea;
 
     // Preserve relative scroll position
-    m_list->m_contentLayer->setPositionY(oldPosition);
+    m_list->m_contentLayer->setPositionY(oldPosition - m_topContainer->getContentHeight() + oldHeight);
 
     // If there are active downloads, hide the Update All button
     if (m_updateAllContainer) {
