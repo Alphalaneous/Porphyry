@@ -525,11 +525,9 @@ void ModList::activateSearch(bool activate) {
 void ModList::updateTopContainer() {
     m_topContainer->updateLayout();
 
-    // Store old relative scroll position (ensuring no divide by zero happens)
+    // Store old relative scroll position
     auto oldPositionArea = m_list->m_contentLayer->getContentHeight() - m_list->getContentHeight();
-    auto oldPosition = oldPositionArea > 0.f ?
-        m_list->m_contentLayer->getPositionY() / oldPositionArea : 
-        -1.f;
+    auto oldPosition = m_list->m_contentLayer->getPositionY();
 
     // Update list size to account for the top menu 
     // (giving a little bit of extra padding for it, the same size as gap)
@@ -540,10 +538,11 @@ void ModList::updateTopContainer() {
     );
     this->updateDisplay(m_display);
 
+    if (oldPosition > 0) oldPosition = 0;
+    if (oldPosition < -oldPositionArea) oldPosition = -oldPositionArea;
+
     // Preserve relative scroll position
-    m_list->m_contentLayer->setPositionY((
-        m_list->m_contentLayer->getContentHeight() - m_list->getContentHeight()
-    ) * oldPosition);
+    m_list->m_contentLayer->setPositionY(oldPosition);
 
     // If there are active downloads, hide the Update All button
     if (m_updateAllContainer) {
@@ -576,11 +575,9 @@ void ModList::updateDisplay(ModListDisplay display) {
         }
     }
 
-    // Store old relative scroll position (ensuring no divide by zero happens)
+    // Store old relative scroll position
     auto oldPositionArea = m_list->m_contentLayer->getContentHeight() - m_list->getContentHeight();
-    auto oldPosition = oldPositionArea > 0.f ?
-        m_list->m_contentLayer->getPositionY() / oldPositionArea : 
-        -1.f;
+    auto oldPosition = m_list->m_contentLayer->getPositionY();
 
     // Update the list layout based on the display model
     if (display == ModListDisplay::Grid) {
@@ -611,10 +608,11 @@ void ModList::updateDisplay(ModListDisplay display) {
         }
     }
 
+    if (oldPosition > 0) oldPosition = 0;
+    if (oldPosition < -oldPositionArea) oldPosition = -oldPositionArea;
+
     // Preserve relative scroll position
-    m_list->m_contentLayer->setPositionY((
-        m_list->m_contentLayer->getContentHeight() - m_list->getContentHeight()
-    ) * oldPosition);
+    m_list->m_contentLayer->setPositionY(oldPosition);
 }
 
 void ModList::updateState() {
