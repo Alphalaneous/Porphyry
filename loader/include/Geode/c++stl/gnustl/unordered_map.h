@@ -29,9 +29,6 @@
 
 #pragma once
 #include "c++config.h"
-#include "stl_pair.h"
-#include "hashtable.h"
-#include "stl_function.h"
 
 namespace geode::stl
 {
@@ -44,10 +41,10 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
   template<typename _Key,
 	   typename _Tp,
 	   typename _Hash = hash<_Key>,
-	   typename _Pred = equal_to<_Key>,
-	   typename _Alloc = allocator<pair<const _Key, _Tp> >,
+	   typename _Pred = std::equal_to<_Key>,
+	   typename _Alloc = std::allocator<std::pair<const _Key, _Tp> >,
 	   typename _Tr = __umap_traits<__cache_default<_Key, _Hash>::value>>
-    using __umap_hashtable = _Hashtable<_Key, pair<const _Key, _Tp>,
+    using __umap_hashtable = _Hashtable<_Key, std::pair<const _Key, _Tp>,
                                         _Alloc, __detail::_Select1st,
 				        _Pred, _Hash,
 				        __detail::_Mod_range_hashing,
@@ -61,10 +58,10 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
   template<typename _Key,
 	   typename _Tp,
 	   typename _Hash = hash<_Key>,
-	   typename _Pred = equal_to<_Key>,
-	   typename _Alloc = allocator<pair<const _Key, _Tp> >,
+	   typename _Pred = std::equal_to<_Key>,
+	   typename _Alloc = std::allocator<std::pair<const _Key, _Tp> >,
 	   typename _Tr = __ummap_traits<__cache_default<_Key, _Hash>::value>>
-    using __ummap_hashtable = _Hashtable<_Key, pair<const _Key, _Tp>,
+    using __ummap_hashtable = _Hashtable<_Key, std::pair<const _Key, _Tp>,
 					 _Alloc, __detail::_Select1st,
 					 _Pred, _Hash,
 					 __detail::_Mod_range_hashing,
@@ -84,20 +81,20 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
    *  @tparam  _Pred   Predicate function object type, defaults
    *                   to equal_to<_Value>.
    *  @tparam  _Alloc  Allocator type, defaults to 
-   *                   allocator<pair<const _Key, _Tp>>.
+   *                   std::allocator<std::pair<const _Key, _Tp>>.
    *
    *  Meets the requirements of a <a href="tables.html#65">container</a>, and
    *  <a href="tables.html#xx">unordered associative container</a>
    *
-   * The resulting value type of the container is pair<const _Key, _Tp>.
+   * The resulting value type of the container is std::pair<const _Key, _Tp>.
    *
    *  Base is _Hashtable, dispatched at compile time via template
    *  alias __umap_hashtable.
    */
   template<class _Key, class _Tp,
 	   class _Hash = hash<_Key>,
-	   class _Pred = equal_to<_Key>,
-	   class _Alloc = allocator<pair<const _Key, _Tp> > >
+	   class _Pred = std::equal_to<_Key>,
+	   class _Alloc = std::allocator<std::pair<const _Key, _Tp> > >
     class unordered_map
     {
       typedef __umap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
@@ -214,7 +211,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *  Create an %unordered_map consisting of copies of the elements in the
        *  list. This is linear in N (where N is @a __l.size()).
        */
-      unordered_map(initializer_list<value_type> __l,
+      unordered_map(std::initializer_list<value_type> __l,
 		    size_type __n = 0,
 		    const hasher& __hf = hasher(),
 		    const key_equal& __eql = key_equal(),
@@ -242,7 +239,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *  of elements assigned.  Old data may be lost.
        */
       unordered_map&
-      operator=(initializer_list<value_type> __l)
+      operator=(std::initializer_list<value_type> __l)
       {
 	_M_h = __l;
 	return *this;
@@ -320,7 +317,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
       // modifiers.
 
       /**
-       *  @brief Attempts to build and insert a pair into the %unordered_map.
+       *  @brief Attempts to build and insert a std::pair into the %unordered_map.
        *
        *  @param __args  Arguments used to generate a new pair instance (see
        *	        std::piecewise_contruct for passing arguments to each
@@ -339,12 +336,12 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *  Insertion requires amortized constant time.
        */
       template<typename... _Args>
-	pair<iterator, bool>
+	std::pair<iterator, bool>
 	emplace(_Args&&... __args)
 	{ return _M_h.emplace(std::forward<_Args>(__args)...); }
 
       /**
-       *  @brief Attempts to build and insert a pair into the %unordered_map.
+       *  @brief Attempts to build and insert a std::pair into the %unordered_map.
        *
        *  @param  __pos  An iterator that serves as a hint as to where the pair
        *                should be inserted.
@@ -352,8 +349,8 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *	         std::piecewise_contruct for passing arguments to each
        *	         part of the pair constructor).
        *  @return An iterator that points to the element with key of the
-       *          pair built from @a __args (may or may not be that
-       *          pair).
+       *          std::pair built from @a __args (may or may not be that
+       *          std::pair).
        *
        *  This function is not concerned about whether the insertion took place,
        *  and thus does not return a boolean like the single-argument emplace()
@@ -375,7 +372,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
 
       //@{
       /**
-       *  @brief Attempts to insert a pair into the %unordered_map.
+       *  @brief Attempts to insert a std::pair into the %unordered_map.
 
        *  @param __x Pair to be inserted (see std::make_pair for easy
        *	     creation of pairs).
@@ -391,21 +388,21 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *
        *  Insertion requires amortized constant time.
        */
-      pair<iterator, bool>
+      std::pair<iterator, bool>
       insert(const value_type& __x)
       { return _M_h.insert(__x); }
 
       template<typename _Pair, typename = typename
 	       std::enable_if<std::is_constructible<value_type,
 						    _Pair&&>::value>::type>
-	pair<iterator, bool>
+	std::pair<iterator, bool>
 	insert(_Pair&& __x)
         { return _M_h.insert(std::forward<_Pair>(__x)); }
       //@}
 
       //@{
       /**
-       *  @brief Attempts to insert a pair into the %unordered_map.
+       *  @brief Attempts to insert a std::pair into the %unordered_map.
        *  @param  __hint  An iterator that serves as a hint as to where the
        *                 pair should be inserted.
        *  @param  __x  Pair to be inserted (see std::make_pair for easy creation
@@ -453,13 +450,13 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
 
       /**
        *  @brief Attempts to insert a list of elements into the %unordered_map.
-       *  @param  __l  A initializer_list<value_type> of elements
+       *  @param  __l  A std::initializer_list<value_type> of elements
        *               to be inserted.
        *
        *  Complexity similar to that of the range constructor.
        */
       void
-      insert(initializer_list<value_type> __l)
+      insert(std::initializer_list<value_type> __l)
       { _M_h.insert(__l); }
 
       //@{
@@ -536,8 +533,8 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *  types.
        *
        *  This exchanges the elements between two %unordered_map in constant time.
-       *  Note that the global swap() function is specialized such that
-       *  swap(m1,m2) will feed to this function.
+       *  Note that the global std::swap() function is specialized such that
+       *  std::swap(m1,m2) will feed to this function.
        */
       void
       swap(unordered_map& __x)
@@ -608,11 +605,11 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *
        *  This function probably only makes sense for %unordered_multimap.
        */
-      pair<iterator, iterator>
+      std::pair<iterator, iterator>
       equal_range(const key_type& __x)
       { return _M_h.equal_range(__x); }
 
-      pair<const_iterator, const_iterator>
+      std::pair<const_iterator, const_iterator>
       equal_range(const key_type& __x) const
       { return _M_h.equal_range(__x); }
       //@}
@@ -801,20 +798,20 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
    *  @tparam  _Pred   Predicate function object type, defaults
    *                   to equal_to<_Value>.
    *  @tparam  _Alloc  Allocator type, defaults to
-   *                   allocator<pair<const _Key, _Tp>>.
+   *                   std::allocator<std::pair<const _Key, _Tp>>.
    *
    *  Meets the requirements of a <a href="tables.html#65">container</a>, and
    *  <a href="tables.html#xx">unordered associative container</a>
    *
-   * The resulting value type of the container is pair<const _Key, _Tp>.
+   * The resulting value type of the container is std::pair<const _Key, _Tp>.
    *
    *  Base is _Hashtable, dispatched at compile time via template
    *  alias __ummap_hashtable.
    */
   template<class _Key, class _Tp,
 	   class _Hash = hash<_Key>,
-	   class _Pred = equal_to<_Key>,
-	   class _Alloc = allocator<pair<const _Key, _Tp> > >
+	   class _Pred = std::equal_to<_Key>,
+	   class _Alloc = std::allocator<std::pair<const _Key, _Tp> > >
     class unordered_multimap
     {
       typedef __ummap_hashtable<_Key, _Tp, _Hash, _Pred, _Alloc>  _Hashtable;
@@ -931,7 +928,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *  Create an %unordered_multimap consisting of copies of the elements in
        *  the list. This is linear in N (where N is @a __l.size()).
        */
-      unordered_multimap(initializer_list<value_type> __l,
+      unordered_multimap(std::initializer_list<value_type> __l,
 			 size_type __n = 0,
 			 const hasher& __hf = hasher(),
 			 const key_equal& __eql = key_equal(),
@@ -959,7 +956,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *  number of elements assigned.  Old data may be lost.
        */
       unordered_multimap&
-      operator=(initializer_list<value_type> __l)
+      operator=(std::initializer_list<value_type> __l)
       {
 	_M_h = __l;
 	return *this;
@@ -1037,7 +1034,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
       // modifiers.
 
       /**
-       *  @brief Attempts to build and insert a pair into the
+       *  @brief Attempts to build and insert a std::pair into the
        *  %unordered_multimap.
        *
        *  @param __args  Arguments used to generate a new pair instance (see
@@ -1057,7 +1054,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
 	{ return _M_h.emplace(std::forward<_Args>(__args)...); }
 
       /**
-       *  @brief Attempts to build and insert a pair into the %unordered_multimap.
+       *  @brief Attempts to build and insert a std::pair into the %unordered_multimap.
        *
        *  @param  __pos  An iterator that serves as a hint as to where the pair
        *                should be inserted.
@@ -1065,7 +1062,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *	         std::piecewise_contruct for passing arguments to each
        *	         part of the pair constructor).
        *  @return An iterator that points to the element with key of the
-       *          pair built from @a __args.
+       *          std::pair built from @a __args.
        *
        *  Note that the first parameter is only a hint and can potentially
        *  improve the performance of the insertion process. A bad hint would
@@ -1084,7 +1081,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
 
       //@{
       /**
-       *  @brief Inserts a pair into the %unordered_multimap.
+       *  @brief Inserts a std::pair into the %unordered_multimap.
        *  @param __x Pair to be inserted (see std::make_pair for easy
        *	     creation of pairs).
        *
@@ -1106,7 +1103,7 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
 
       //@{
       /**
-       *  @brief Inserts a pair into the %unordered_multimap.
+       *  @brief Inserts a std::pair into the %unordered_multimap.
        *  @param  __hint  An iterator that serves as a hint as to where the
        *                 pair should be inserted.
        *  @param  __x  Pair to be inserted (see std::make_pair for easy creation
@@ -1153,13 +1150,13 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
       /**
        *  @brief Attempts to insert a list of elements into the
        *  %unordered_multimap.
-       *  @param  __l  A initializer_list<value_type> of elements
+       *  @param  __l  A std::initializer_list<value_type> of elements
        *               to be inserted.
        *
        *  Complexity similar to that of the range constructor.
        */
       void
-      insert(initializer_list<value_type> __l)
+      insert(std::initializer_list<value_type> __l)
       { _M_h.insert(__l); }
 
       //@{
@@ -1237,8 +1234,8 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *
        *  This exchanges the elements between two %unordered_multimap in
        *  constant time.
-       *  Note that the global swap() function is specialized such that
-       *  swap(m1,m2) will feed to this function.
+       *  Note that the global std::swap() function is specialized such that
+       *  std::swap(m1,m2) will feed to this function.
        */
       void
       swap(unordered_multimap& __x)
@@ -1298,11 +1295,11 @@ _GLIBCXX_BEGIN_NAMESPACE_CONTAINER
        *  @return  Pair of iterators that possibly points to the subsequence
        *           matching given key.
        */
-      pair<iterator, iterator>
+      std::pair<iterator, iterator>
       equal_range(const key_type& __x)
       { return _M_h.equal_range(__x); }
 
-      pair<const_iterator, const_iterator>
+      std::pair<const_iterator, const_iterator>
       equal_range(const key_type& __x) const
       { return _M_h.equal_range(__x); }
       //@}

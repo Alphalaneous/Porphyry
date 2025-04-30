@@ -32,7 +32,6 @@
 
 #include <type_traits>
 #include "../c++config.h"
-#include "../type_traits.h"
 
 namespace __gnu_cxx _GLIBCXX_VISIBILITY(default)
 {
@@ -122,9 +121,9 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
 
   template<typename _Value>
     struct __numeric_traits
-    : public geode::stl::conditional<geode::stl::is_integral<_Value>::value,
+    : public std::conditional<std::is_integral<_Value>::__value,
 				__numeric_traits_integer<_Value>,
-				__numeric_traits_floating<_Value> >::type
+				__numeric_traits_floating<_Value> >::__type
     { };
 
 _GLIBCXX_END_NAMESPACE_VERSION

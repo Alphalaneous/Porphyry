@@ -733,11 +733,13 @@ void SimpleAxisLayout::Impl::apply(cocos2d::CCNode* layout) {
     // calculate required cross scaling
     auto crossScales = this->calculateCrossScaling(layout, realChildren);
     for (auto child : realChildren) {
+        auto scale = 1.f;
         if (crossScales.contains(child)) {
-            m_relativeScalesPerNode[child] *= crossScales[child];
+            scale *= crossScales[child];
         }
 
-        this->setScale(child, m_originalScalesPerNode[child] * m_relativeScalesPerNode[child]);
+        this->setScale(child, scale);
+        m_relativeScalesPerNode[child] = scale;
     }
 
     // calculate required main scaling
@@ -745,11 +747,13 @@ void SimpleAxisLayout::Impl::apply(cocos2d::CCNode* layout) {
     // minScale and maxScale functions account for this change
     auto mainScales = this->calculateMainScaling(layout, realChildren, totalGap);
     for (auto child : realChildren) {
+        auto scale = m_relativeScalesPerNode[child];
         if (mainScales.contains(child)) {
-            m_relativeScalesPerNode[child] *= mainScales[child];
+            scale *= mainScales[child];
         }
 
-        this->setScale(child, m_originalScalesPerNode[child] * m_relativeScalesPerNode[child]);
+        this->setScale(child, scale);
+        m_relativeScalesPerNode[child] = scale;
     }
 
     // apply positions

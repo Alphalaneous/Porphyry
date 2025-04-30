@@ -143,7 +143,7 @@
 /*
   Outline of libstdc++ namespaces.
 
-  namespace geode::stl
+  namespace std
   {
     namespace __debug { }
     namespace __parallel { }
@@ -183,7 +183,7 @@
   For full details see:
   http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/namespaces.html
 */
-namespace geode::stl
+namespace std
 {
   typedef __SIZE_TYPE__ 	size_t;
   typedef __PTRDIFF_TYPE__	ptrdiff_t;
@@ -200,7 +200,7 @@ namespace geode::stl
 // Inline namespace for symbol versioning.
 #if _GLIBCXX_INLINE_VERSION
 
-namespace geode::stl
+namespace std
 {
   inline namespace __7 { }
 
@@ -245,7 +245,7 @@ namespace __gnu_cxx
 // Inline namespaces for special modes: debug, parallel, profile.
 #if defined(_GLIBCXX_DEBUG) || defined(_GLIBCXX_PARALLEL) \
     || defined(_GLIBCXX_PROFILE)
-namespace geode::stl
+namespace std
 {
   // Non-inline namespace for components replaced by alternates in active mode.
   namespace __cxx1998
@@ -347,7 +347,7 @@ namespace geode::stl
 
 // Inline namespace for long double 128 mode.
 #if defined _GLIBCXX_LONG_DOUBLE_COMPAT && defined __LONG_DOUBLE_128__
-namespace geode::stl
+namespace std
 {
   inline namespace __gnu_cxx_ldbl128 { }
 }
