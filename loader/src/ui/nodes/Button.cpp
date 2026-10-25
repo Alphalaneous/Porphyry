@@ -293,8 +293,6 @@ void Button::selected() {
 
     ClickedEvent(this, ClickType::Selected).send();
 
-    //if (m_impl->m_selectCallback) m_impl->m_selectCallback(this);
-
     m_impl->m_selected = true;
 }
 
@@ -312,8 +310,6 @@ void Button::unselected() {
 
     ClickedEvent(this, ClickType::Unselected).send();
 
-    //if (m_impl->m_unselectCallback) m_impl->m_unselectCallback(this);
-
     m_impl->m_selected = false;
 }
 
@@ -324,8 +320,6 @@ void Button::activate() {
     resetDefaults();
 
     ClickedEvent(this, ClickType::Activated).send();
-
-    //if (m_impl->m_activateCallback) m_impl->m_activateCallback(this);
 }
 
 void Button::setScaleMultiplier(float multiplier) {
